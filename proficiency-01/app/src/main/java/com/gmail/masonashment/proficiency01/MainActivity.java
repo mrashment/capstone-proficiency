@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private Date noon;
     private Date afternoonEnd;
     private Date earlyMorn;
+    private Date current;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,27 +25,32 @@ public class MainActivity extends AppCompatActivity {
 
         //get the current time
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        String formatter = "oops";
         Date currentTime = Calendar.getInstance().getTime();
 
         try {
             noon = timeFormat.parse("12:00:00");
             afternoonEnd = timeFormat.parse("18:00:00");
             earlyMorn = timeFormat.parse("05:45:00");
+            formatter = timeFormat.format(currentTime);
+            current = timeFormat.parse(formatter);
 
         } catch(ParseException e) {
             e.printStackTrace();
         }
 
-        //create variable to reference textview
+        //create variable to reference textviews
+        TextView timeTextView = (TextView) findViewById(R.id.timeTextview);
         TextView messageTextView = (TextView) findViewById(R.id.messageTextview);
 
-        //set the textviews message
-        if(currentTime.equals(earlyMorn) ||
-                (currentTime.after(earlyMorn) && currentTime.before(noon))) {
+        //set the textviews messages
+        timeTextView.setText(formatter);
+        if(current.equals(earlyMorn) ||
+                (current.after(earlyMorn) && current.before(noon))) {
             messageTextView.setText("Good Morning!");
         }
-        else if(currentTime.equals(noon) ||
-                (currentTime.after(noon) && currentTime.before(afternoonEnd))) {
+        else if(current.equals(noon) ||
+                (current.after(noon) && current.before(afternoonEnd))) {
             messageTextView.setText("Good Afternoon!");
         }
         else {
