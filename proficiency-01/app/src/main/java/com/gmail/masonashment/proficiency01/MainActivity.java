@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         // set the textviews messages
         timeTextView.setText(formatter);
+
         // check if its the morning
         if(current.equals(earlyMorn) ||
                 (current.after(earlyMorn) && current.before(noon))) {
