@@ -51,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener numberListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(pendingOperation != null && pendingOperation.equals("=")) {
+                    operand1 = nullValue;
+                }
                 //append the number
                 Button button = (Button) view;
                 numberEditText.append(button.getText().toString());
