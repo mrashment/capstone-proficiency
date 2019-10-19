@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 numberEditText.setText("");
                 resultTextView.setText("");
-                operand1 = nullValue;
+                //operand1 = nullValue;
             }
         };
         buttonClear.setOnClickListener(clearListener);
@@ -102,13 +102,13 @@ public class MainActivity extends AppCompatActivity {
         if (operand1 == null) {
             operand1 = value;
         } else {
-            //if they pressed =, change the pending operation to =
-            if (operation == "=") {
+            // if the last operation was =, we want to reset so this new operation is the pending operation
+            if (pendingOperation.equals("=")) {
                 pendingOperation = operation;
             }
             //perform the pending operation
             switch(pendingOperation) {
-                case "=":
+                case "=": // this means they pressed = without giving us an arithmetic operation
                     operand1 = value;
                     break;
                 case "+":
@@ -118,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
                     if (value == 0) {
                         numberEditText.setText("");
                         resultTextView.setText("");
-                        operand1 = nullValue;
                     } else {
                         operand1 /= value;
                     }
