@@ -11,6 +11,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
     private TextView resultTextView;
     private EditText numberEditText;
+    private TextView operationTextView;
     private Button button0;
     private Button button2;
     private Button button4;
@@ -21,6 +22,10 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonEquals;
     private Button buttonClear;
 
+    private Double operand1;
+    private Double nullValue;
+    private String pendingOperation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         // initialize all the buttons
         resultTextView = findViewById(R.id.resultTextView);
         numberEditText = findViewById(R.id.numberEditText);
+        operationTextView = findViewById(R.id.operationTextView);
         button0 = findViewById(R.id.button0);
         button2 = findViewById(R.id.button2);
         button4 = findViewById(R.id.button4);
@@ -62,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 numberEditText.setText("");
                 resultTextView.setText("");
+                operand1 = nullValue;
             }
         };
         buttonClear.setOnClickListener(clearListener);
@@ -73,14 +80,53 @@ public class MainActivity extends AppCompatActivity {
                 Button button = (Button) view;
                 String operation = button.getText().toString();
                 String value = numberEditText.getText().toString();
-                // value == number in editText, operation == symbol on button
-                performOperation(value,operation);
+                operationTextView.setText(operation);
+                try {
+                    Double doubleValue = Double.valueOf(value);
+                    // value == number in editText, operation == symbol on button
+                    performOperation(doubleValue, operation);
+                } catch (NumberFormatException e) {
+                    numberEditText.setText("");
+                }
+                pendingOperation = operation;
             }
         };
+
+        buttonAdd.setOnClickListener(operationListener);
+        buttonDivide.setOnClickListener(operationListener);
+        buttonEquals.setOnClickListener(operationListener);
     }
 
-    private void performOperation(String value, String operation) {
-
+    private void performOperation(Double value, String operation) {
+        // check whether there is a number stored already
+        if (operand1 == null) {
+            operand1 = value;
+        } else {
+            //if they pressed =, change the pending operation to =
+            if (operation == "=") {
+                pendingOperation = operation;
+            }
+            //perform the pending operation
+            switch(pendingOperation) {
+                case "=":
+                    operand1 = value;
+                    break;
+                case "+":
+                    operand1 += value;
+                    break;
+                case "/":
+                    if (value == 0) {
+                        numberEditText.setText("");
+                        resultTextView.setText("");
+                        operand1 = nullValue;
+                    } else {
+                        operand1 /= value;
+                    }
+                    break;
+            }
+        }
+        resultTextView.setText(operand1.toString());
+        numberEditText.setText("");
     }
 
 }
