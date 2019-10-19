@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView resultTextView;
     private EditText numberEditText;
     private TextView operationTextView;
+    private TextView warningTextView;
     private Button button0;
     private Button button2;
     private Button button4;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         resultTextView = findViewById(R.id.resultTextView);
         numberEditText = findViewById(R.id.numberEditText);
         operationTextView = findViewById(R.id.operationTextView);
+        warningTextView = findViewById(R.id.warningTextView);
         button0 = findViewById(R.id.button0);
         button2 = findViewById(R.id.button2);
         button4 = findViewById(R.id.button4);
@@ -68,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 numberEditText.setText("");
                 resultTextView.setText("");
-                //operand1 = nullValue;
+                warningTextView.setText("");
+                operand1 = nullValue;
             }
         };
         buttonClear.setOnClickListener(clearListener);
@@ -117,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
                 case "/":
                     if (value == 0) {
                         numberEditText.setText("");
-                        resultTextView.setText("");
+                        warningTextView.setText("Divisions by 0 will be ignored!");
+
                     } else {
                         operand1 /= value;
                     }
