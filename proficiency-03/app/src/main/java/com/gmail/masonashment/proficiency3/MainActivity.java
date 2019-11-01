@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private TextView resultTextView;
     private EditText numberEditText;
     private TextView operationTextView;
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener numberListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(pendingOperation != null && pendingOperation.equals("=")) {
+                if (pendingOperation != null && pendingOperation.equals("=")) {
                     operand1 = nullValue;
                 }
                 //append the number
@@ -122,7 +124,9 @@ public class MainActivity extends AppCompatActivity {
         translateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "translate buttonclick: executing MagicPOST");
                 MagicPOST magicPOST = new MagicPOST();
+                magicPOST.execute(resultTextView.getText().toString());
             }
         });
 
@@ -139,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 pendingOperation = operation;
             }
             //perform the pending operation
-            switch(pendingOperation) {
+            switch (pendingOperation) {
                 case "=": // this means they pressed = without giving us an arithmetic operation
                     operand1 = value;
                     break;
@@ -161,10 +165,12 @@ public class MainActivity extends AppCompatActivity {
         numberEditText.setText("");
     }
 
-    class MagicPOST extends AsyncTask<String,Void,String> {
+    class MagicPOST extends AsyncTask<String, Void, String> {
+        private static final String TAG = "MagicPOST";
 
         @Override
         protected void onPostExecute(String s) {
+            Log.d(TAG, "onPostExecute: arg is " + s);
             if (s != null) {
                 responseTextView = findViewById(R.id.responseTextView);
                 responseTextView.setText(s);
@@ -173,15 +179,18 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
-            String calcResult = strings[0];
+            Log.d(TAG, "doInBackground: starts");
             String urlString = "http://cgi.sice.indiana.edu/~examples/info-i494/api/index.php/magic-number";
-            String data = "team=59&number=" + calcResult;
+            int parsedResult = Double.valueOf(strings[0]).intValue(); // because the server said it had to be an int
+            String data = "team=59&number=" + parsedResult;
             byte[] postData = data.getBytes();
             StringBuilder sb = null;
 
             try {
                 URL url = new URL(urlString);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+                Log.d(TAG, "doInBackground: connection opened");
 
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
@@ -191,20 +200,33 @@ public class MainActivity extends AppCompatActivity {
                 outputPost.flush();
                 outputPost.close();
 
+                Log.d(TAG, "doInBackground: connecting");
+                httpURLConnection.connect();
+
                 BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
                 sb = new StringBuilder();
                 String line;
 
-                while((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {
+                    Log.d(TAG, "doInBackground: line is " + line);
                     sb.append(line + '\n');
                 }
+                reader.close();
 
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                System.err.println("MalformedURLException : " + e.getMessage());
             } catch (IOException e) {
+                System.err.println("IOException : " + e.getMessage());
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            return sb.toString();
+            if (sb != null) {
+                Log.d(TAG, "doInBackground: returning " + sb.toString());
+                return sb.toString();
+            } else {
+                return null;
+            }
         }
     }
 
