@@ -2,6 +2,7 @@ package com.gmail.masonashment.proficiency3;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,11 +11,15 @@ import android.widget.TextView;
 
 import com.gmail.masonashment.proficiency3.R;
 
+import java.net.HttpURLConnection;
+
 public class MainActivity extends AppCompatActivity {
     private TextView resultTextView;
     private EditText numberEditText;
     private TextView operationTextView;
     private TextView warningTextView;
+    private TextView responseTextView;
+    private Button translateButton;
     private Button button0;
     private Button button2;
     private Button button4;
@@ -103,6 +108,18 @@ public class MainActivity extends AppCompatActivity {
         buttonAdd.setOnClickListener(operationListener);
         buttonDivide.setOnClickListener(operationListener);
         buttonEquals.setOnClickListener(operationListener);
+
+        // new stuff for proficiency 3 -------------------------------------------------------------
+        translateButton = findViewById(R.id.translateButton);
+
+        translateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MagicPOST magicPOST = new MagicPOST(resultTextView.getText());
+            }
+        });
+
+
     }
 
     private void performOperation(Double value, String operation) {
@@ -135,6 +152,20 @@ public class MainActivity extends AppCompatActivity {
         }
         resultTextView.setText(operand1.toString());
         numberEditText.setText("");
+    }
+
+    class MagicPOST extends AsyncTask {
+
+        private String result;
+
+        public MagicPOST(String result) {
+            this.result = result;
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            return null;
+        }
     }
 
 }
