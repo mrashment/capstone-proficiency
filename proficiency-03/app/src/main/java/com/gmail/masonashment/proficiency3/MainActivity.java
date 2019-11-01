@@ -1,7 +1,9 @@
 package com.gmail.masonashment.proficiency3;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +22,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -171,10 +174,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             Log.d(TAG, "onPostExecute: arg is " + s);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            String status = "false";
+            String message = "empty";
             if (s != null) {
+                String[] splitResponse = s.split(",");
+                status = splitResponse[0].split(":")[1]; // should be in the form of "status":true, so grabs the second value
+                message = splitResponse[2].split(":")[1];
+
                 responseTextView = findViewById(R.id.responseTextView);
                 responseTextView.setText(s);
             }
+
+            builder.setTitle(status.equals("true") ? "Successful" : "Unsuccessful");
+            builder.setMessage(message);
+            builder.setCancelable(true);
+            builder.show();
         }
 
         @Override
@@ -217,7 +232,6 @@ public class MainActivity extends AppCompatActivity {
                 System.err.println("MalformedURLException : " + e.getMessage());
             } catch (IOException e) {
                 System.err.println("IOException : " + e.getMessage());
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
