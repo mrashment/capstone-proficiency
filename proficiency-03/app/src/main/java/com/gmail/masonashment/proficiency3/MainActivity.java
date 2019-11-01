@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.gmail.masonashment.proficiency3.R;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -120,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         translateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MagicPOST magicPOST = new MagicPOST(resultTextView.getText());
+                MagicPOST magicPOST = new MagicPOST();
             }
         });
 
@@ -162,11 +164,20 @@ public class MainActivity extends AppCompatActivity {
     class MagicPOST extends AsyncTask<String,Void,String> {
 
         @Override
+        protected void onPostExecute(String s) {
+            if (s != null) {
+                responseTextView = findViewById(R.id.responseTextView);
+                responseTextView.setText(s);
+            }
+        }
+
+        @Override
         protected String doInBackground(String... strings) {
             String calcResult = strings[0];
             String urlString = "http://cgi.sice.indiana.edu/~examples/info-i494/api/index.php/magic-number";
             String data = "team=59&number=" + calcResult;
             byte[] postData = data.getBytes();
+            StringBuilder sb = null;
 
             try {
                 URL url = new URL(urlString);
@@ -176,15 +187,24 @@ public class MainActivity extends AppCompatActivity {
                 httpURLConnection.setDoOutput(true);
 
                 OutputStream outputPost = new BufferedOutputStream(httpURLConnection.getOutputStream());
-                outputPost.write(data);
+                outputPost.write(postData);
                 outputPost.flush();
                 outputPost.close();
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+                sb = new StringBuilder();
+                String line;
+
+                while((line = reader.readLine()) != null) {
+                    sb.append(line + '\n');
+                }
 
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return sb.toString();
         }
     }
 
