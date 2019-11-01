@@ -11,7 +11,12 @@ import android.widget.TextView;
 
 import com.gmail.masonashment.proficiency3.R;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
     private TextView resultTextView;
@@ -154,17 +159,32 @@ public class MainActivity extends AppCompatActivity {
         numberEditText.setText("");
     }
 
-    class MagicPOST extends AsyncTask {
-
-        private String result;
-
-        public MagicPOST(String result) {
-            this.result = result;
-        }
+    class MagicPOST extends AsyncTask<String,Void,String> {
 
         @Override
-        protected Object doInBackground(Object[] objects) {
-            return null;
+        protected String doInBackground(String... strings) {
+            String calcResult = strings[0];
+            String urlString = "http://cgi.sice.indiana.edu/~examples/info-i494/api/index.php/magic-number";
+            String data = "team=59&number=" + calcResult;
+            byte[] postData = data.getBytes();
+
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setDoOutput(true);
+
+                OutputStream outputPost = new BufferedOutputStream(httpURLConnection.getOutputStream());
+                outputPost.write(data);
+                outputPost.flush();
+                outputPost.close();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
