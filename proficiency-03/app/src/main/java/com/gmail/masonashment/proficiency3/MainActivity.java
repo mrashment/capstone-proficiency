@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";

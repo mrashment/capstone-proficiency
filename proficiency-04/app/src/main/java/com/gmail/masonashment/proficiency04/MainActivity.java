@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gmail.masonashment.proficiency04.R;
 
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        String username = getIntent().getStringExtra("username");
+        Toast.makeText(this,"Hello, "+username,Toast.LENGTH_LONG).show();
 
         // initialize all the buttons
         resultTextView = findViewById(R.id.resultTextView);
