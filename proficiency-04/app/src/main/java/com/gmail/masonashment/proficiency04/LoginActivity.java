@@ -53,7 +53,22 @@ public class LoginActivity extends AppCompatActivity {
     class LoginThread extends AsyncTask<String,Void,String[]> {
         @Override
         protected void onPostExecute(String[] s) {
-
+            String response = s[0].trim();
+            switch(response) {
+                case "username invalid":
+                    responseTextView.setText("User not found.");
+                    break;
+                case "password invalid":
+                    responseTextView.setText("Incorrect password.");
+                    break;
+                case "success":
+                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                    intent.putExtra("username",s[1]);
+                    startActivity(intent);
+                    break;
+                default:
+                    responseTextView.setText("Something went wrong.");
+            }
         }
 
         @Override
