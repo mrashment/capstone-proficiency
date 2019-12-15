@@ -2,6 +2,7 @@ package com.gmail.masonashment.proficiency05;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -65,14 +66,29 @@ public class RegisterActivity extends AppCompatActivity {
         thread.execute();
     }
 
-    class RegisterThread extends AsyncTask<String, Void, String> {
+    class RegisterThread extends AsyncTask<String, Void, String[]> {
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(String[] s) {
+            String response = s[0].trim();
+            switch(response) {
+                case "User already exists.":
+                    warningTextView.setText("Email already in use.");
+                    break;
+                case "Failure":
+                    warningTextView.setText("Something went wrong. (SQL)");
+                    break;
+                case "Success":
+                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                    intent.putExtra("fname",s[1]);
+                    startActivity(intent);
+                    break;
+                default:
+                    warningTextView.setText("Something went wrong. (Server)");
+            }
         }
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected String[] doInBackground(String... strings) {
             String urlString = "http://cgi.sice.indiana.edu/~mashment/itp5_register.php";
             String data = "email=" + strings[0] + "&fname=" + strings[1] + "&lname=" + strings[2] + "&password=" + strings[3];
             byte[] postData = data.getBytes();
@@ -110,7 +126,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             if (sb != null) {
-                String[] values = new String[] {sb.toString(),strings[0]};
+                String[] values = new String[] {sb.toString(),strings[1]};
                 return values;
             } else {
                 return null;
