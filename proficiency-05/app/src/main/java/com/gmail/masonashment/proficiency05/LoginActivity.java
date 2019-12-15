@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameEditText, passwordEditText;
     private TextView responseTextView;
     private Button loginButton;
+    private Button registerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,13 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.usernameEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         responseTextView = findViewById(R.id.responseTextView);
+        registerButton = findViewById(R.id.registerButton);
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,10 +66,10 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String[] s) {
             String response = s[0].trim();
             switch(response) {
-                case "username invalid":
+                case "Invalid Email":
                     responseTextView.setText("User not found.");
                     break;
-                case "password invalid":
+                case "Invalid Password":
                     responseTextView.setText("Incorrect password.");
                     break;
                 case "success":
@@ -76,8 +84,8 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected String[] doInBackground(String... strings) {
-            String urlString = "http://cgi.sice.indiana.edu/~mashment/itp4_login.php";
-            String data = "username=" + strings[0] + "&password=" + strings[1];
+            String urlString = "http://cgi.sice.indiana.edu/~mashment/itp5_login.php";
+            String data = "email=" + strings[0] + "&password=" + strings[1];
             byte[] postData = data.getBytes();
             StringBuilder sb = null;
 
