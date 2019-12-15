@@ -63,7 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registerUser(String email, String fname, String lname, String password) {
         RegisterThread thread = new RegisterThread();
-        thread.execute();
+        thread.execute(email,fname,lname,password);
     }
 
     class RegisterThread extends AsyncTask<String, Void, String[]> {
