@@ -1,3 +1,3 @@
-# Mason Ashment (mashment)
+# Mason Ashment (mrashment)
 - Major: Informatics
 - Minor: Computer Science
